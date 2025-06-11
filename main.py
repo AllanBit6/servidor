@@ -51,6 +51,18 @@ def createEstudianteDB(nombre, edad):
     except:
         return False
 
+def deleteEstudianteDB(estudiante_id):
+    conn = connect('estudiantes.db')
+    cr = conn.cursor()
+
+    try:
+        cr.execute('DELETE FROM estudiantes WHERE id = ?', (estudiante_id,))
+        conn.commit()
+        conn.close()
+        return True
+    except:
+        return False
+
 
 app = Flask(__name__)
 
@@ -86,6 +98,13 @@ def create_estudiante():
     else:
         return jsonify({"error": "Error al crear el estudiante"}), 500
     
+@app.route('/estudiante/<estudiante_id>', methods=['DELETE'])
+def delete_estudiante(estudiante_id):
+    if deleteEstudianteDB(estudiante_id):
+        return jsonify({"message": "Estudiante eliminado"}), 200
+    else:
+        return jsonify({"error": "Error al eliminar el estudiante"}), 500
+
 
 
 if __name__ == "__main__":
